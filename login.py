@@ -1,5 +1,7 @@
+from sqlite3 import connect
 from tkinter import *
 from tkinter import messagebox
+import mysql.connector
 
 class LoginWindow:
     def __init__(self):
@@ -21,6 +23,7 @@ class LoginWindow:
 
         self.win.geometry("1000x550+"+str(x)+"+"+str(y))
 
+        
     def form(self):
         self.frame = Frame(self.win, height=400, width=450)
         self.frame.place(x=290, y=72)
@@ -28,6 +31,7 @@ class LoginWindow:
 
         x,y= 280,65
 
+ 
     #now create a login form
         self.label = Label(self.frame, text="User Login")
         self.label.config(font=("Courier", 20, 'bold'))
@@ -52,19 +56,33 @@ class LoginWindow:
         self.button.place(x=170, y=y+290)
 
         self.win.mainloop()
+    
     def login(self):
-        #get the data and store it into tuple 
-        data = (
-            self.email.get(),
-            self.password.get()        
-            )
+        self.un=self.email.get()
+        self.pw=self.password.get()
     
         if self.email.get() == "":
-            messagebox.showinfo("Alert!","Enter Email First")
+            messagebox.showerror("Alert!","Enter Email First")
         elif self.password.get() == "":
-            messagebox.showinfo("Alert!", "Enter Password first")
+            messagebox.showerror("Alert!", "Enter Password first")
 
-        
+        else:
+            mydb = mysql.connector.connect(host="localhost",user="root",password="pass",database="project")
+            mycur = mydb.cursor()
+            mycur.execute("select cust_id,cust_password from customer")
+            
+            result = mycur.fetchall()
+            
+            flag=0
+            for i in result:
+                if(i[0]==self.un and i[1]==self.pw):
+                    flag=1
+                    break
+            if(flag==1):
+                self.win.destroy()
+            else:
+                messagebox.showerror("Alert!","Invalid credentials")
+
     
 
 
