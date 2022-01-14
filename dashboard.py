@@ -1,4 +1,5 @@
 from tkinter import *
+import login
 
 class DashboardWindow:
     def __init__(self):

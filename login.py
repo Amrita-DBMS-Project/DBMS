@@ -21,6 +21,7 @@ class LoginWindow:
         y= int(height/ 6 + 40)
 
         self.win.geometry("1000x550+"+str(x)+"+"+str(y))
+        self.win.resizable(width=False,height=False)
 
         
     def form(self):
