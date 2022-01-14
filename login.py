@@ -1,4 +1,3 @@
-from sqlite3 import connect
 from tkinter import *
 from tkinter import messagebox
 import mysql.connector
