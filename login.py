@@ -30,8 +30,6 @@ class LoginWindow:
 
 
         x,y= 280,65
-
- 
     #now create a login form
         self.label = Label(self.frame, text="User Login")
         self.label.config(font=("Courier", 20, 'bold'))
@@ -67,7 +65,7 @@ class LoginWindow:
             messagebox.showerror("Alert!", "Enter Password first")
 
         else:
-            mydb = mysql.connector.connect(host="localhost",user="root",password="pass",database="project")
+            mydb = mysql.connector.connect(host="localhost",user="root",password="root",database="project")
             mycur = mydb.cursor()
             mycur.execute("select cust_id,cust_password from customer")
             
