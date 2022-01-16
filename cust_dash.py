@@ -230,43 +230,36 @@ def login_user():
 
             oi = Label(insertWindow, text='ORDER ID')
             oi.grid(row=0, column=0)
-
             oi1 = Entry(insertWindow)
             oi1.grid(row=1,column=0)
 
             ii = Label(insertWindow, text='ORDER STATUS')
             ii.grid(row=0, column=1)
-
             ii1 = Entry(insertWindow)
             ii1.grid(row=1,column=1)
 
             qo = Label(insertWindow, text='ITEM ID')
             qo.grid(row=0, column=2)
-
             qo1 = Entry(insertWindow)
             qo1.grid(row=1,column=2)
 
             it_nm = Label(insertWindow, text='CUST ID')
             it_nm.grid(row=0, column=3)
-
             it_nm1 = Entry(insertWindow)
             it_nm1.grid(row=1,column=3)
 
             it_ds = Label(insertWindow, text='CUST PHONE')
             it_ds.grid(row=0, column=4)
-
             it_ds1 = Entry(insertWindow)
             it_ds1.grid(row=1,column=4)
 
             ip = Label(insertWindow, text='CUST ADDRESS')
             ip.grid(row=0, column=5)
-
             ip1 = Entry(insertWindow)
             ip1.grid(row=1,column=5)
 
             s_id = Label(insertWindow, text='SELLER ID')
             s_id.grid(row=0, column=6)
-
             s_id1 = Entry(insertWindow)
             s_id1.grid(row=1,column=6)
 
