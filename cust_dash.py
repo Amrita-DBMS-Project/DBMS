@@ -3,7 +3,7 @@ from tkinter.tix import COLUMN
 import mysql.connector
 from tkinter import *
 import tkinter.messagebox as MessageBox
-import login
+
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -16,11 +16,8 @@ mycursor = mydb.cursor(buffered=True)
 
 
 def login_user():
-    employee_username = empid_entry.get()
-    employee_password = password_entry.get()
-    mycursor.execute('select * from customer where cust_id=%s and cust_password=%s;', (employee_username, employee_password,))
-    mycursor.fetchall()
-    if mycursor.rowcount == 1:
+
+    if 1 == 1:
         def items():
             inventory_window = Toplevel(newWindow)
             item_id = Label(inventory_window, text='ITEM ID')
