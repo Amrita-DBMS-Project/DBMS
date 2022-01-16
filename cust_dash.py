@@ -1,4 +1,5 @@
 from datetime import date
+from tkinter.tix import COLUMN
 import mysql.connector
 from tkinter import *
 import tkinter.messagebox as MessageBox
@@ -105,26 +106,26 @@ def login_user():
             insert_into.place(x=60, y=80)
 
         def delete_product(item_id):
-            mycursor.execute('delete from product_inventory where item_id=%s', (item_id,))
+            mycursor.execute('delete from product_inventory where item_id=%s', (item_id))
             mydb.commit()
 
-        def restock():
-            anotherWindow = Toplevel(newWindow)
-            anotherWindow.geometry('500x200')
-            lbl = Label(anotherWindow, text="Enter ITEM ID to be restocked")
-            lbl.place(x=20, y=20)
+        # def restock():
+        #     anotherWindow = Toplevel(newWindow)
+        #     anotherWindow.geometry('500x200')
+        #     lbl = Label(anotherWindow, text="Enter ITEM ID to be restocked")
+        #     lbl.place(x=20, y=20)
 
-            en = Entry(anotherWindow)
-            en.place(x=250, y=20)
+        #     en = Entry(anotherWindow)
+        #     en.place(x=250, y=20)
 
-            bt = Button(anotherWindow, text="Restock", command=lambda: restock_query(en.get()))
-            bt.place(x=150, y=75)
+        #     bt = Button(anotherWindow, text="Restock", command=lambda: restock_query(en.get()))
+        #     bt.place(x=150, y=75)
 
-        def restock_query(item_id):
-            mycursor.execute(
-                'update product_inventory set quantity_in_stock = quantity_in_stock + 50 where item_id = %s',
-                (item_id,))
-            mydb.commit()
+        # def restock_query(item_id):
+        #     mycursor.execute(
+        #         'update product_inventory set quantity_in_stock = quantity_in_stock + 50 where item_id = %s',
+        #         (item_id,))
+        #     mydb.commit()
 
         def order_lists():
             order_window = Toplevel(newWindow)
@@ -338,33 +339,64 @@ def login_user():
             del_user.grid(row=2, column=9)
 
         def insert_user():
-            insertWindow = Toplevel(newWindow)
-            insertWindow.geometry("500x300")
-            l1 = Label(insertWindow, text="Enter User's first name")
-            l1.place(x=20, y=20)
+            userWindow = Toplevel(newWindow)
 
-            l1 = Label(insertWindow, text="Enter User's last name")
-            l1.place(x=20, y=80)
+            uid = Label(userWindow, text='CUST ID')
+            uid.grid(row=0, column=0)
 
-            l1 = Label(insertWindow, text="Enter User's address")
-            l1.place(x=20, y=140)
+            fname = Label(userWindow, text='CUST NAME')
+            fname.grid(row=0, column=1)
 
-            e1 = Entry(insertWindow)
-            e1.place(x=200, y=20)
+            lname = Label(userWindow, text='CUST PHONE')
+            lname.grid(row=0, column=2)
 
-            e2 = Entry(insertWindow)
-            e2.place(x=200, y=80)
+            uadd = Label(userWindow, text='CUST ADDRESS')
+            uadd.grid(row=0, column=3)
 
-            e3 = Entry(insertWindow)
-            e3.place(x=200, y=140)
+            upin = Label(userWindow, text="CUST PINCODE")
+            upin.grid(row=0,column=4)
 
-            insert_into = Button(insertWindow, text='INSERT',
-                                 command=lambda: insert_values_users(e1.get(), e2.get(), e3.get()))
-            insert_into.place(x=300, y=270)
+            upass = Label(userWindow, text="CUST PASSWORD")
+            upass.grid(row=0,column=5)
 
-        def insert_values_users(ufname, ulname, uadd):
-            mycursor.execute('INSERT INTO users(user_fname, user_lname, user_address) VALUES(%s,%s,%s)',
-                             (ufname, ulname, uadd,))
+            ugend = Label(userWindow, text="CUST GENDER")
+            ugend.grid(row=0,column=6)
+
+            udob = Label(userWindow, text="CUST DOB")
+            udob.grid(row=0,column=7)
+
+            uid1 = Entry(userWindow)
+            uid1.grid(row=1,column=0)
+
+            fname1 = Entry(userWindow)
+            fname1.grid(row=1,column=1)
+
+            lname1 = Entry(userWindow)
+            lname1.grid(row=1,column=2)
+        
+            uadd1 = Entry(userWindow)
+            uadd1.grid(row=1,column=3)
+
+            upin1 = Entry(userWindow)
+            upin1.grid(row=1,column=4)
+
+            upass1 = Entry(userWindow)
+            upass1.grid(row=1,column=5)
+
+            ugend1 = Entry(userWindow)
+            ugend1.grid(row=1,column=6)
+
+            udob1 = Entry(userWindow)
+            udob1.grid(row=1,column=7)
+
+
+            insert_into = Button(userWindow, text='INSERT',
+                                 command=lambda: insert_values_users(uid1.get(),fname1.get(),lname1.get(),uadd1.get(),upin1.get(),upass1.get(),ugend1.get(),udob1.get()))
+            insert_into.grid(row=2,column=9)
+
+        def insert_values_users(uid, ufname, ulname, uadd, upin, upass, ugend, udob):
+            mycursor.execute('INSERT INTO customer(cust_id, cust_name, cust_phone, cust_address, cust_pincode, cust_password, cust_gender, cust_dob) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',
+                             (uid, ufname, ulname, uadd, upin, upass, ugend, udob))
             mydb.commit()
 
         def delete_user():
@@ -381,7 +413,7 @@ def login_user():
             insert_into.place(x=60, y=80)
 
         def remove_user(user_id):
-            mycursor.execute('delete from users where user_id=%s', (user_id,))
+            mycursor.execute('delete from customer where cust_id=%s', (user_id,))
             mydb.commit()
 
         newWindow = Tk()
