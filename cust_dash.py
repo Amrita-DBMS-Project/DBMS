@@ -8,7 +8,7 @@ import tkinter.messagebox as MessageBox
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="root",
+    password="hksharsh11",
     database="project"
 )
 
@@ -500,22 +500,5 @@ def login_user():
 
 
 root = Tk()
-root.geometry("600x300")
-root.title('Inventory Management')
-
-empid = Label(root, text="Enter SELLER ID: ")
-empid.place(x=20, y=20)
-
-password = Label(root, text="Enter password: ")
-password.place(x=20, y=50)
-
-empid_entry = Entry(root)
-empid_entry.place(x=150, y=20)
-
-password_entry = Entry(root, show='*')
-password_entry.place(x=150, y=50)
-
-login_button = Button(root, text="Login", command=login_user, height=2, width=7)
-login_button.place(x=170, y=130)
 
 root.mainloop()
