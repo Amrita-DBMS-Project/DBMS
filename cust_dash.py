@@ -12,7 +12,7 @@ mydb = mysql.connector.connect(
     database="project"
 )
 
-mycursor = mydb.cursor()
+mycursor = mydb.cursor(buffered=True)
 
 
 def login_user():
@@ -21,7 +21,7 @@ def login_user():
     mycursor.execute('select * from customer where cust_id=%s and cust_password=%s;', (employee_username, employee_password,))
     mycursor.fetchall()
     if mycursor.rowcount == 1:
-        def inventory():
+        def items():
             inventory_window = Toplevel(newWindow)
             item_id = Label(inventory_window, text='ITEM ID')
             item_id.grid(row=0, column=0)
@@ -35,9 +35,6 @@ def login_user():
             ip = Label(inventory_window, text='ITEM PRICE')
             ip.grid(row=0, column=3)
 
-            # qs = Label(inventory_window, text='QUANTITY IN STOCK')
-            # qs.grid(row=0, column=4)
-
             mycursor.execute("select * from ITEMS")
             i = 1
             for x in mycursor.fetchall():
@@ -47,14 +44,45 @@ def login_user():
                     e.insert(0, x[j])
                 i = i + 1
 
-            btn = Button(inventory_window, text="Add product", command=lambda: add_product())
+            btn = Button(inventory_window, text="Add items", command=lambda: add_product())
             btn.grid(row=i + 2, column=1)
 
-            btn = Button(inventory_window, text="Delete product", command=lambda: remove_product())
+            btn = Button(inventory_window, text="Delete items", command=lambda: remove_product())
             btn.grid(row=i + 2, column=2)
 
-            # btn = Button(inventory_window, text="Restock inventory", command=lambda: restock())
-            # btn.grid(row=i + 2, column=3)
+            btn = Button(inventory_window, text="Update items", command=lambda: update_product())
+            btn.grid(row=i + 2, column=3)
+        
+        def update_product():
+            userWindow = Toplevel(newWindow)
+
+            iid = Label(userWindow, text='ITEM ID')
+            iid.grid(row=0, column=0)
+
+            what = Label(userWindow, text="WHAT TO UPDATE")
+            what.grid(row=0,column=1)
+
+            value1 = what = Label(userWindow, text="UPDATE VALUE")
+            value1.grid(row=0,column=2)
+
+            iid1 = Entry(userWindow)
+            iid1.grid(row=1,column=0)
+
+            update_what = Entry(userWindow)
+            update_what.grid(row=1,column=1)
+
+            value = Entry(userWindow)
+            value.grid(row=1,column=2)
+
+            update_into = Button(userWindow, text='UPDATE',
+                                 command=lambda: update_values_product(update_what.get(),value.get(),iid1.get()))
+            update_into.grid(row=2,column=9)
+        
+        def update_values_product(update_what,value,uid):
+            # val = (update_what,value,uid)
+            # query = 'UPDATE CUSTOMER SET %s = %s WHERE CUST_ID = %s'
+            mycursor.execute("UPDATE ITEMS SET %s='%s' WHERE ITEM_ID='%s'" % (update_what,value,uid))
+            mydb.commit() 
 
         def add_product():
             insertWindow = Toplevel(newWindow)
@@ -106,26 +134,8 @@ def login_user():
             insert_into.place(x=60, y=80)
 
         def delete_product(item_id):
-            mycursor.execute('delete from product_inventory where item_id=%s', (item_id))
+            mycursor.execute("DELETE FROM ITEMS WHERE ITEM_ID='%s'" % (item_id))
             mydb.commit()
-
-        # def restock():
-        #     anotherWindow = Toplevel(newWindow)
-        #     anotherWindow.geometry('500x200')
-        #     lbl = Label(anotherWindow, text="Enter ITEM ID to be restocked")
-        #     lbl.place(x=20, y=20)
-
-        #     en = Entry(anotherWindow)
-        #     en.place(x=250, y=20)
-
-        #     bt = Button(anotherWindow, text="Restock", command=lambda: restock_query(en.get()))
-        #     bt.place(x=150, y=75)
-
-        # def restock_query(item_id):
-        #     mycursor.execute(
-        #         'update product_inventory set quantity_in_stock = quantity_in_stock + 50 where item_id = %s',
-        #         (item_id,))
-        #     mydb.commit()
 
         def order_lists():
             order_window = Toplevel(newWindow)
@@ -133,16 +143,25 @@ def login_user():
             order_id = Label(order_window, text='ORDER ID')
             order_id.grid(row=0, column=0)
 
-            od = Label(order_window, text='ORDER DATE')
+            od = Label(order_window, text='ORDER STATUS')
             od.grid(row=0, column=1)
 
-            tp = Label(order_window, text='TOTAL PRICE')
+            tp = Label(order_window, text='ITEM ID')
             tp.grid(row=0, column=2)
 
-            ui = Label(order_window, text='USER ID')
+            ui = Label(order_window, text='CUSTOMER ID')
             ui.grid(row=0, column=3)
 
-            mycursor.execute("select * from orders")
+            cp = Label(order_window, text='CUSTOMER PHONE')
+            cp.grid(row=0, column=4)
+
+            c_add = Label(order_window, text='CUSTOMER ADDRESS')
+            c_add.grid(row=0, column=5)
+
+            s_id = Label(order_window, text='SELLER ID')
+            s_id.grid(row=0, column=6)
+
+            mycursor.execute("SELECT * FROM ORDERS")
             i = 1
             for x in mycursor.fetchall():
                 for j in range(len(x)):
@@ -153,7 +172,7 @@ def login_user():
 
             lbl = Label(order_window, text="Enter Order ID to view")
             lbl.grid(row=i + 3, column=1)
-            order_entry = Entry(order_window, width=10)
+            order_entry = Entry(order_window, width=15)
             order_entry.grid(row=i + 3, column=2)
             btn = Button(order_window, text="submit", command=lambda: show_order(order_entry.get()))
             btn.grid(row=i + 3, column=3)
@@ -163,29 +182,33 @@ def login_user():
 
         def show_order(oid):
             so_window = Toplevel(newWindow)
-            oii = Label(so_window, text='ORDER ITEM ID')
-            oii.grid(row=0, column=0)
+            oi = Label(so_window, text='ORDER ID')
+            oi.grid(row=0, column=0)
 
-            ii = Label(so_window, text='ITEM ID')
+            ii = Label(so_window, text='ORDER STATUS')
             ii.grid(row=0, column=1)
 
-            oi = Label(so_window, text='ORDER ID')
-            oi.grid(row=0, column=2)
+            qo = Label(so_window, text='ITEM ID')
+            qo.grid(row=0, column=2)
 
-            qo = Label(so_window, text='QUANTITY ORDERED')
-            qo.grid(row=0, column=3)
+            it_nm = Label(so_window, text='CUST ID')
+            it_nm.grid(row=0, column=3)
 
-            it_nm = Label(so_window, text='ITEM NAME')
-            it_nm.grid(row=0, column=4)
+            it_ds = Label(so_window, text='CUST PHONE')
+            it_ds.grid(row=0, column=4)
 
-            it_ds = Label(so_window, text='ITEM DESCRIPTION')
-            it_ds.grid(row=0, column=5)
+            ip = Label(so_window, text='CUST ADDRESS')
+            ip.grid(row=0, column=5)
 
-            ip = Label(so_window, text='ITEM PRICE')
-            ip.grid(row=0, column=6)
+            s_id = Label(so_window, text='SELLER ID')
+            s_id.grid(row=0, column=6)
 
-            mycursor.execute("SELECT * FROM ORDERS")
-
+            # mycursor.execute("SELECT * FROM ORDERS")
+            mycursor.execute(
+                "select *"
+                " from ORDERS"
+                " where order_id=%s", (oid,)
+            )
             l = 1
             for x in mycursor.fetchall():
                 for y in range(len(x)):
@@ -205,42 +228,61 @@ def login_user():
             insertWindow = Toplevel(newWindow)
             insertWindow.geometry("400x300")
 
-            l1 = Button(insertWindow, text="Add items", command=lambda: items_insert())
-            l1.place(x=20, y=20)
+            oi = Label(insertWindow, text='ORDER ID')
+            oi.grid(row=0, column=0)
 
-            l1 = Label(insertWindow, text="Enter Total Order Price")
-            l1.place(x=20, y=80)
+            oi1 = Entry(insertWindow)
+            oi1.grid(row=1,column=0)
 
-            l1 = Label(insertWindow, text="Enter User ID")
-            l1.place(x=20, y=140)
+            ii = Label(insertWindow, text='ORDER STATUS')
+            ii.grid(row=0, column=1)
 
-            e4 = Entry(insertWindow)
-            e4.place(x=200, y=80)
+            ii1 = Entry(insertWindow)
+            ii1.grid(row=1,column=1)
 
-            e5 = Entry(insertWindow)
-            e5.place(x=200, y=140)
+            qo = Label(insertWindow, text='ITEM ID')
+            qo.grid(row=0, column=2)
+
+            qo1 = Entry(insertWindow)
+            qo1.grid(row=1,column=2)
+
+            it_nm = Label(insertWindow, text='CUST ID')
+            it_nm.grid(row=0, column=3)
+
+            it_nm1 = Entry(insertWindow)
+            it_nm1.grid(row=1,column=3)
+
+            it_ds = Label(insertWindow, text='CUST PHONE')
+            it_ds.grid(row=0, column=4)
+
+            it_ds1 = Entry(insertWindow)
+            it_ds1.grid(row=1,column=4)
+
+            ip = Label(insertWindow, text='CUST ADDRESS')
+            ip.grid(row=0, column=5)
+
+            ip1 = Entry(insertWindow)
+            ip1.grid(row=1,column=5)
+
+            s_id = Label(insertWindow, text='SELLER ID')
+            s_id.grid(row=0, column=6)
+
+            s_id1 = Entry(insertWindow)
+            s_id1.grid(row=1,column=6)
+
+            mycursor.execute("SELECT * FROM ORDERS")
 
             insert_into = Button(insertWindow, text='ADD',
-                                 command=lambda: insert_values_orders(e4.get(), e5.get(), item_id_list,
-                                                                      quantity_ordered_list))
-            insert_into.place(x=200, y=200)
+                                 command=lambda: insert_values_orders(oi1.get(), ii1.get(), qo1.get(),it_nm1.get(),it_ds1.get(),ip1.get(),s_id1.get() ))
+            insert_into.grid(row=2,column=5)
+            
 
-        def insert_values_orders(oprice, uid, item_list, quantity_list):
+        def insert_values_orders(oi,ii,qo,it,it_ds,ip,s_id):
             odate = date.today()
             print(odate)
-            mycursor.execute('INSERT INTO orders(order_date, total_price, user_id) VALUES(%s,%s,%s)',
-                             (odate, oprice, uid,))
+            mycursor.execute('INSERT INTO orders(order_id, order_status, item_id, cust_id, cust_phone, cust_address, seller_id) VALUES(%s,%s,%s,%s,%s,%s,%s)',
+                             (oi,ii,qo,it,it_ds,ip,s_id))
             mydb.commit()
-
-            mycursor.execute('select order_id from orders order by order_id desc limit 1')
-            oid = mycursor.fetchall()[0][0]
-
-            for i in range(0, len(item_list)):
-                mycursor.execute('insert into contain(order_id, item_id, quantity_ordered) values(%s, %s, %s)',
-                                 (oid, item_list[i], quantity_list[i]))
-            mydb.commit()
-            item_id_list.clear()
-            quantity_ordered_list.clear()
 
         item_id_list = []
         quantity_ordered_list = []
@@ -268,29 +310,29 @@ def login_user():
             quantity_ordered_list.append(quantity_ordered)
 
         def update_inventory(order_item_id):
-            mycursor.execute('select item_id, order_id, quantity_ordered from contain where order_item_id=%s',
+            mycursor.execute('select item_id, order_id, order_status from orders where order_item_id=%s',
                              (order_item_id,))
             item_id, order_id, quantity_ordered = mycursor.fetchall()[0]
 
-            mycursor.execute('select quantity_in_stock from product_inventory where item_id = %s', (item_id,))
-            quantity_in_stock = mycursor.fetchall()[0][0]
+            # mycursor.execute('select quantity_in_stock from product_inventory where item_id = %s', (item_id,))
+            # quantity_in_stock = mycursor.fetchall()[0][0]
 
-            if quantity_in_stock >= quantity_ordered:
-                mycursor.execute(
-                    'update product_inventory set quantity_in_stock = quantity_in_stock - %s where item_id = %s',
-                    (quantity_ordered, item_id,))
-                mydb.commit()
+            # if quantity_in_stock >= quantity_ordered:
+            #     mycursor.execute(
+            #         'update product_inventory set quantity_in_stock = quantity_in_stock - %s where item_id = %s',
+            #         (quantity_ordered, item_id,))
+            #     mydb.commit()
 
-                mycursor.execute('select count(*) from contain where order_id=%s', (str(order_id),))
-                rows = mycursor.fetchall()[0][0]
-                if rows == 1:
-                    mycursor.execute('delete from orders where order_id=%s', (order_id,))
-                    mydb.commit()
-                mycursor.execute('delete from contain where order_item_id=%s', (order_item_id,))
-                mydb.commit()
+            #     mycursor.execute('select count(*) from contain where order_id=%s', (str(order_id),))
+            #     rows = mycursor.fetchall()[0][0]
+            #     if rows == 1:
+            #         mycursor.execute('delete from orders where order_id=%s', (order_id,))
+            #         mydb.commit()
+            #     mycursor.execute('delete from contain where order_item_id=%s', (order_item_id,))
+            #     mydb.commit()
 
-            else:
-                MessageBox.showwarning('Error', 'Required quantity not available')
+            # else:
+            #     MessageBox.showwarning('Error', 'Required quantity not available')
 
             # mycursor.execute('select * from product_inventory')
             # for x in mycursor.fetchall():
@@ -299,7 +341,7 @@ def login_user():
         def users():
             userWindow = Toplevel(newWindow)
 
-            uid = Label(userWindow, text='CUST ID')
+            uid = Label(userWindow, text='SELLER ID')
             uid.grid(row=0, column=0)
 
             fname = Label(userWindow, text='CUST NAME')
@@ -344,7 +386,7 @@ def login_user():
         def insert_user():
             userWindow = Toplevel(newWindow)
 
-            uid = Label(userWindow, text='CUST ID')
+            uid = Label(userWindow, text='SELLER ID')
             uid.grid(row=0, column=0)
 
             fname = Label(userWindow, text='CUST NAME')
@@ -405,7 +447,7 @@ def login_user():
         def delete_user():
             insertWindow = Toplevel(newWindow)
             insertWindow.geometry("500x300")
-            l1 = Label(insertWindow, text="Enter User ID to be deleted")
+            l1 = Label(insertWindow, text="Enter SELLER ID to be deleted")
             l1.place(x=20, y=20)
 
             e1 = Entry(insertWindow)
@@ -422,7 +464,7 @@ def login_user():
         def update_user():
             userWindow = Toplevel(newWindow)
 
-            uid = Label(userWindow, text='CUST ID')
+            uid = Label(userWindow, text='SELLER ID')
             uid.grid(row=0, column=0)
 
             what = Label(userWindow, text="WHAT TO UPDATE")
@@ -445,18 +487,18 @@ def login_user():
             update_into.grid(row=2,column=9)
 
         def update_values_user(update_what,value,uid):
-            val = (update_what,value,uid)
-            query = """UPDATE CUSTOMER SET %s = '%s' WHERE CUST_ID = '%s'"""
-            mycursor.execute(query,val)
+            # val = (update_what,value,uid)
+            # query = 'UPDATE CUSTOMER SET %s = %s WHERE CUST_ID = %s'
+            mycursor.execute("UPDATE CUSTOMER SET %s='%s' WHERE CUST_ID='%s'" % (update_what,value,uid))
             mydb.commit()            
 
         newWindow = Tk()
         newWindow.geometry("800x300")
 
-        show_inventory = Button(newWindow, text="Show Inventory", command=inventory)
+        show_inventory = Button(newWindow, text="Show Items", command=items)
         show_inventory.place(x=20, y=20)
 
-        show_order_lists = Button(newWindow, text='Show order lists', command=order_lists)
+        show_order_lists = Button(newWindow, text='Show orders', command=order_lists)
         show_order_lists.place(x=150, y=20)
 
         show_users = Button(newWindow, text='Show users', command=users)
@@ -471,7 +513,7 @@ root = Tk()
 root.geometry("600x300")
 root.title('Inventory Management')
 
-empid = Label(root, text="Enter CUSTOMER ID: ")
+empid = Label(root, text="Enter SELLER ID: ")
 empid.place(x=20, y=20)
 
 password = Label(root, text="Enter password: ")
