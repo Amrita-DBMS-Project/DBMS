@@ -333,10 +333,13 @@ def login_user():
                 i = i + 1
 
             create_user = Button(userWindow, text='ADD USER', command=lambda: insert_user())
-            create_user.grid(row=1, column=8)
+            create_user.grid(row=1, column=9)
 
             del_user = Button(userWindow, text='DELETE USER', command=lambda: delete_user())
             del_user.grid(row=2, column=9)
+
+            update_user1 = Button(userWindow, text='UPDATE USER', command=lambda: update_user())
+            update_user1.grid(row=3,column=9)
 
         def insert_user():
             userWindow = Toplevel(newWindow)
@@ -415,6 +418,37 @@ def login_user():
         def remove_user(user_id):
             mycursor.execute('delete from customer where cust_id=%s', (user_id,))
             mydb.commit()
+        
+        def update_user():
+            userWindow = Toplevel(newWindow)
+
+            uid = Label(userWindow, text='CUST ID')
+            uid.grid(row=0, column=0)
+
+            what = Label(userWindow, text="WHAT TO UPDATE")
+            what.grid(row=0,column=1)
+
+            value1 = what = Label(userWindow, text="UPDATE VALUE")
+            value1.grid(row=0,column=2)
+
+            uid1 = Entry(userWindow)
+            uid1.grid(row=1,column=0)
+
+            update_what = Entry(userWindow)
+            update_what.grid(row=1,column=1)
+
+            value = Entry(userWindow)
+            value.grid(row=1,column=2)
+
+            update_into = Button(userWindow, text='UPDATE',
+                                 command=lambda: update_values_user(update_what.get(),value.get(),uid1.get()))
+            update_into.grid(row=2,column=9)
+
+        def update_values_user(update_what,value,uid):
+            val = (update_what,value,uid)
+            query = """UPDATE CUSTOMER SET %s = '%s' WHERE CUST_ID = '%s'"""
+            mycursor.execute(query,val)
+            mydb.commit()            
 
         newWindow = Tk()
         newWindow.geometry("800x300")
