@@ -2,7 +2,7 @@ from datetime import date
 import mysql.connector
 from tkinter import *
 import tkinter.messagebox as MessageBox
-# import LoginWindow
+import login
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -183,12 +183,7 @@ def login_user():
             ip = Label(so_window, text='ITEM PRICE')
             ip.grid(row=0, column=6)
 
-            mycursor.execute(
-                "select contain.order_item_id, contain.item_id, contain.order_id, contain.quantity_ordered,"
-                " product_inventory.item_name, product_inventory.item_description, product_inventory.item_price"
-                " from contain inner join product_inventory on contain.item_id = product_inventory.item_id"
-                " where order_id=%s", (oid,)
-            )
+            mycursor.execute("SELECT * FROM ORDERS")
 
             l = 1
             for x in mycursor.fetchall():
@@ -303,19 +298,31 @@ def login_user():
         def users():
             userWindow = Toplevel(newWindow)
 
-            uid = Label(userWindow, text='USER ID')
+            uid = Label(userWindow, text='CUST ID')
             uid.grid(row=0, column=0)
 
-            fname = Label(userWindow, text='FIRST NAME')
+            fname = Label(userWindow, text='CUST NAME')
             fname.grid(row=0, column=1)
 
-            lname = Label(userWindow, text='LAST NAME')
+            lname = Label(userWindow, text='CUST PHONE')
             lname.grid(row=0, column=2)
 
-            uadd = Label(userWindow, text='USER ADDRESS')
+            uadd = Label(userWindow, text='CUST ADDRESS')
             uadd.grid(row=0, column=3)
 
-            mycursor.execute("select * from users")
+            upin = Label(userWindow, text="CUST PINCODE")
+            upin.grid(row=0,column=4)
+
+            upass = Label(userWindow, text="CUST PASSWORD")
+            upass.grid(row=0,column=5)
+
+            ugend = Label(userWindow, text="CUST GENDER")
+            ugend.grid(row=0,column=6)
+
+            udob = Label(userWindow, text="CUST DOB")
+            udob.grid(row=0,column=7)
+
+            mycursor.execute("select * from CUSTOMER")
             i = 1
             for x in mycursor.fetchall():
                 for j in range(len(x)):
@@ -325,10 +332,10 @@ def login_user():
                 i = i + 1
 
             create_user = Button(userWindow, text='ADD USER', command=lambda: insert_user())
-            create_user.grid(row=1, column=6)
+            create_user.grid(row=1, column=8)
 
             del_user = Button(userWindow, text='DELETE USER', command=lambda: delete_user())
-            del_user.grid(row=2, column=6)
+            del_user.grid(row=2, column=9)
 
         def insert_user():
             insertWindow = Toplevel(newWindow)

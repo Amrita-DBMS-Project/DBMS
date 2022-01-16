@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 import mysql.connector
 import signup
-
+import cust_dash
 class LoginWindow:
     def __init__(self):
         self.win = Tk()
@@ -91,7 +91,8 @@ class LoginWindow:
                     flag=1
                     break
             if(flag==1):
-                self.win.destroy()
+                # self.win.destroy()
+                cust_dash.login_user()
             else:
                 messagebox.showerror("Alert!","Invalid credentials")
 
